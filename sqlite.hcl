@@ -1,12 +1,25 @@
 description = "SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine."
-binaries = ["*"]
+binaries = ["sqlite3", "sqldiff", "sqlite3_analyzer"]
 strip = 1
 
+vars = {
+  "platform": "",
+  "cpu": "",
+  "year": "",
+  "encoded_version": "",
+}
+
 platform "linux" "amd64" {
+  vars = {
+    "platform": "linux"
+  }
   source = "https://www.sqlite.org/${year}/sqlite-tools-linux-${cpu}-${encoded_version}.zip"
 }
 
 platform "darwin" {
+  vars = {
+    "platform": "osx"
+  }
   source = "https://www.sqlite.org/${year}/sqlite-tools-osx-${cpu}-${encoded_version}.zip"
 }
 
@@ -35,10 +48,17 @@ version "3.42.0" {
 }
 
 version "3.46.1" {
+  dont-extract = true
   vars = {
-    "cpu": "x64",
-    "encoded_version": "3460100",
-    "year": "2024",
+    "cpu" : "x64",
+    "encoded_version" : "3460100",
+    "year" : "2024",
+  }
+
+  on "unpack" {
+    run {
+      cmd = "/bin/bash -c 'unzip sqlite-tools-${platform}-${cpu}-${encoded_version}.zip && rm sqlite-tools-${platform}-${cpu}-${encoded_version}.zip'"
+    }
   }
 }
 
